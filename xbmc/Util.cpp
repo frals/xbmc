@@ -1230,6 +1230,7 @@ CStdString CUtil::ValidatePath(const CStdString &path, bool bFixDoubleSlashes /*
   // recurse and crash XBMC
   if (URIUtils::IsURL(path) && 
      (path.Find('%') >= 0 ||
+      path.Left(4).Equals("apk:") ||
       path.Left(4).Equals("zip:") ||
       path.Left(4).Equals("rar:") ||
       path.Left(6).Equals("stack:") ||
@@ -1751,6 +1752,12 @@ int CUtil::GMTZoneCalc(int iRescBiases, int iHour, int iMinute, int &iMinuteNew)
 
 void CUtil::GetRecursiveListing(const CStdString& strPath, CFileItemList& items, const CStdString& strMask, bool bUseFileDirectories)
 {
+  CStdStringArray regexps = g_advancedSettings.m_tvshowExcludeFromScanRegExps;
+
+  if (CUtil::ExcludeFileOrFolder(strPath, regexps))
+    return;
+
+
   CFileItemList myItems;
   int flags = DIR_FLAG_DEFAULTS;
   if (!bUseFileDirectories)
