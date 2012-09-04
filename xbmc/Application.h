@@ -474,6 +474,8 @@ protected:
 #ifdef HAS_EVENT_SERVER
   std::map<std::string, std::map<int, float> > m_lastAxisMap;
 #endif
+private:
+  bool addressToBind(CStdString& striface, struct sockaddr_in* sock);
 
 };
 

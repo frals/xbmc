@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <sys/select.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -40,7 +41,7 @@ public:
   CWebServer();
   virtual ~CWebServer() { }
 
-  bool Start(int port, const std::string &username, const std::string &password);
+  bool Start(struct sockaddr_in sock, int port, const std::string &username, const std::string &password);
   bool Stop();
   bool IsStarted();
   void SetCredentials(const std::string &username, const std::string &password);
@@ -106,6 +107,7 @@ private:
 
   struct MHD_Daemon *m_daemon;
   bool m_running, m_needcredentials;
+  struct sockaddr_in m_sockaddr;
   std::string m_Credentials64Encoded;
   CCriticalSection m_critSection;
   static std::vector<IHTTPRequestHandler *> m_requestHandlers;

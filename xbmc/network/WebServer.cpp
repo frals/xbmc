@@ -20,6 +20,7 @@
  */
 
 #include "WebServer.h"
+#include <arpa/inet.h>
 #ifdef HAS_WEB_SERVER
 #include "filesystem/File.h"
 #include "utils/log.h"
@@ -500,11 +501,13 @@ struct MHD_Daemon* CWebServer::StartMHD(unsigned int flags, int port)
                           MHD_OPTION_CONNECTION_LIMIT, 512,
                           MHD_OPTION_CONNECTION_TIMEOUT, timeout,
                           MHD_OPTION_URI_LOG_CALLBACK, &CWebServer::UriRequestLogger, this,
+                          MHD_OPTION_SOCK_ADDR, &m_sockaddr,
                           MHD_OPTION_END);
 }
 
-bool CWebServer::Start(int port, const string &username, const string &password)
+bool CWebServer::Start(struct sockaddr_in sock, int port, const string &username, const string &password)
 {
+  m_sockaddr = sock;
   SetCredentials(username, password);
   if (!m_running)
   {

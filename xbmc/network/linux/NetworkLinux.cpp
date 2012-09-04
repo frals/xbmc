@@ -315,6 +315,15 @@ CNetworkLinux::~CNetworkLinux(void)
 
 std::vector<CNetworkInterface*>& CNetworkLinux::GetInterfaceList(void)
 {
+//   CLog::Log(LOGDEBUG, "CNetworkLinux::GetInterfaceList");
+//   vector<CNetworkInterface*>::const_iterator iter = m_interfaces.begin();
+//   while (iter != m_interfaces.end())
+//   {
+//      CNetworkInterface* iface = *iter;
+//      if (iface)
+//          CLog::Log(LOGDEBUG, "--- Interface found: %s (%s)", iface->GetName().c_str(), iface->GetMacAddress().c_str());
+//      ++iter;
+//   }
    return m_interfaces;
 }
 

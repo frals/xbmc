@@ -248,6 +248,7 @@ void CAdvancedSettings::Initialize()
   m_curlretries = 2;
   m_curlDisableIPV6 = false;      //Certain hardware/OS combinations have trouble
                                   //with ipv6.
+  m_bindOnlyIface = "";
 
   m_fullScreen = m_startFullScreen = false;
   m_showExitButton = true;
@@ -673,6 +674,7 @@ void CAdvancedSettings::ParseSettingsFile(const CStdString &file)
     XMLUtils::GetInt(pElement, "curlretries", m_curlretries, 0, 10);
     XMLUtils::GetBoolean(pElement,"disableipv6", m_curlDisableIPV6);
     XMLUtils::GetUInt(pElement, "cachemembuffersize", m_cacheMemBufferSize);
+    XMLUtils::GetString(pElement, "bindonlyinterface", m_bindOnlyIface);
   }
 
   pElement = pRootElement->FirstChildElement("jsonrpc");

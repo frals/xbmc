@@ -288,6 +288,7 @@ class CAdvancedSettings
     int m_curllowspeedtime;
     int m_curlretries;
     bool m_curlDisableIPV6;
+    CStdString m_bindOnlyIface;
 
     bool m_fullScreen;
     bool m_startFullScreen;

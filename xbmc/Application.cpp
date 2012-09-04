@@ -1463,6 +1463,16 @@ bool CApplication::StartServer(enum ESERVERS eServer, bool bStart, bool bWait/* 
   return ret;
 }
 
+bool CApplication::addressToBind(CStdString &striface, struct sockaddr_in* sock)
+{
+    CNetworkInterface* iface = getNetwork().GetInterfaceByName(striface);
+    if(iface) {
+        CLog::Log(LOGWARNING, "Binding to IP: %s", iface->GetCurrentIPAddress().c_str());
+        inet_pton(AF_INET, iface->GetCurrentIPAddress().c_str(), &sock->sin_addr);
+    }
+    return false;
+}
+
 bool CApplication::StartWebServer()
 {
 #ifdef HAS_WEB_SERVER
@@ -1479,7 +1489,24 @@ bool CApplication::StartWebServer()
 #endif
 
     bool started = false;
-    if (m_WebServer.Start(webPort, g_guiSettings.GetString("services.webserverusername"), g_guiSettings.GetString("services.webserverpassword")))
+
+    /* initialize to INADDR_ANY and replace if needed when checking if we
+       should only bind to one specific interface.
+       NOTE: ONLY supports ip4 */
+    struct sockaddr_in sock;
+    sock.sin_family = AF_INET;
+    sock.sin_port = htons(webPort);
+    sock.sin_addr.s_addr = INADDR_ANY;
+    /* this probably breaks listening to ipv6 address... doh! */
+    if(!g_advancedSettings.m_bindOnlyIface.IsEmpty()) {
+        CLog::Log(LOGWARNING, "Should not bind to any interface, instead bind to: %s", g_advancedSettings.m_bindOnlyIface.c_str());
+        if(addressToBind(g_advancedSettings.m_bindOnlyIface, &sock))
+            CLog::Log(LOGWARNING, "Found a matching interface and got IP: %s", inet_ntoa(sock.sin_addr));
+        else
+            CLog::Log(LOGWARNING, "Listening to INADDR_ANY due to no matching interface found");
+    }
+
+    if (m_WebServer.Start(sock, webPort, g_guiSettings.GetString("services.webserverusername"), g_guiSettings.GetString("services.webserverpassword")))
     {
       std::map<std::string, std::string> txt;
       started = true;
